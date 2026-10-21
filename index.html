@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Complaint Manager KSMA-ke</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#17243a}
+
+header{background:#142b4a;color:white;padding:20px}
+
+header h1{font-size:21px;margin:0 0 5px}
+
+header p{margin:0;font-size:13px;color:#dce7f6}
+
+main{max-width:1000px;margin:auto;padding:15px}
+
+.panel,.stat{background:white;border:1px solid #dfe6ef;border-radius:12px;padding:15px;margin-bottom:15px}
+
+h2{font-size:18px;margin:0 0 12px}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:15px}
+
+.stat{text-align:left;cursor:pointer;margin:0}
+
+.stat strong{display:block;font-size:25px;margin:9px 0}
+
+.stat small,.meta{color:#64748b;font-size:12px}
+
+.active{border:2px solid #2463eb}
+
+label{display:block;font-size:13px;font-weight:bold;margin:12px 0 6px}
+
+input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font-size:15px;background:white}
+
+textarea{min-height:80px}
+
+button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:pointer}
+
+.primary{background:#2463eb;color:white}
+
+.secondary{background:#e8eef7;color:#142b4a}
+
+.danger{background:#fee2e2;color:#991b1b}
+
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+
+.complaint{background:white;border:1px solid #dfe6ef;border-radius:10px;padding:13px;margin-top:10px}
+
+.complaint h3{font-size:16px;margin:0 0 8px;overflow-wrap:anywhere}
+
+.pill{display:inline-block;padding:5px 8px;border-radius:20px;background:#e8eef7;font-size:12px;margin:3px}
+
+.status-New{background:#dbeafe;color:#1d4ed8}
+
+.status-In-Progress{background:#fef3c7;color:#92400e}
+
+.status-Resolved{background:#dcfce7;color:#166534}
+
+.details{white-space:pre-wrap;overflow-wrap:anywhere}
+
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+#app{display:none}
+
+#message{display:none;padding:11px;border-radius:7px;margin-bottom:12px;white-space:pre-wrap}
+
+@media(max-width:600px){.grid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}main{padding:10px}}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>Complaint Manager KSMA-ke</h1>
+
+<p>Shared complaint management</p>
+
+</header>
+
+<main>
+
+<div id="message"></div>
+
+<section id="login" class="panel">
+
+<h2>Login</h2>
+
+<label for="email">Email</label>
+
+<input id="email" type="email" autocomplete="username" placeholder="Your email">
+
+<label for="password">Password</label>
+
+<input id="password" type="password" autocomplete="current-password" placeholder="Your password">
+
+<div class="actions">
+
+<button class="primary" onclick="signIn()">Login</button>
+
+</div>
+
+</section>
+
+<section id="app">
+
+<div class="topline">
+
+<h2>Dashboard</h2>
+
+<div class="actions">
+
+<button class="secondary" onclick="loadComplaints()">Refresh</button>
+
+<button class="secondary" onclick="signOut()">Logout</button>
+
+</div>
+
+</div>
+
+<div class="grid">
+
+<button class="stat active" id="card-All" onclick="setFilter('All')">TOTAL<strong id="count-All">0</strong><small>All complaints</small></button>
+
+<button class="stat" id="card-New" onclick="setFilter('New')">NEW<strong id="count-New">0</strong><small>Not started</small></button>
+
+<button class="stat" id="card-In Progress" onclick="setFilter('In Progress')">IN PROGRESS<strong id="count-In Progress">0</strong><small>Being handled</small></button>
+
+<button class="stat" id="card-Resolved" onclick="setFilter('Resolved')">RESOLVED<strong id="count-Resolved">0</strong><small>Closed complaints</small></button>
+
+</div>
+
+<section class="panel">
+
+<h2 id="formTitle">Add a complaint</h2>
+
+<input id="editId" type="hidden">
+
+<div class="formgrid">
+
+<div>
+
+<label for="department">Department *</label>
+
+<select id="department">
+
+<option value="">Select department</option>
+
+<option>Production</option><option>Planning</option><option>Traffic</option>
+
+<option>Incoming</option><option>Finance</option><option>IE</option>
+
+<option>Quality</option><option>HR</option><option>HSE</option>
+
+<option>Logistics</option><option>Other</option>
+
+</select>
+
+</div>
+
+<div>
+
+<label for="project">Project *</label>
+
+<input id="project" placeholder="Enter project">
+
+</div>
+
+<div>
+
+<label for="subject">Complaint subject *</label>
+
+<input id="subject" placeholder="Short subject">
+
+</div>
+
+<div>
+
+<label for="reportedBy">Reported by</label>
+
+<input id="reportedBy" placeholder="Name or staff ID">
+
+</div>
+
+<div>
+
+<label for="responsible">Responsible</label>
+
+<input id="responsible" placeholder="Person or group">
+
+</div>
+
+<div>
+
+<label for="priority">Priority</label>
+
+<select id="priority"><option>Medium</option><option>High</option><option>Low</option></select>
+
+</div>
+
+<div>
+
+<label for="status">Status</label>
+
+<select id="status"><option>New</option><option>In Progress</option><option>Resolved</option></select>
+
+</div>
+
+<div>
+
+<label for="originalDate">Complaint date</label>
+
+<input id="originalDate" type="date">
+
+</div>
+
+</div>
+
+<label for="details">Details *</label>
+
+<textarea id="details" placeholder="Describe the complaint"></textarea>
+
+<label for="rootCause">Root cause / action taken</label>
+
+<textarea id="rootCause" placeholder="Root cause or action taken"></textarea>
+
+<div class="actions">
+
+<button class="primary" onclick="saveComplaint()">Save complaint</button>
+
+<button class="secondary" onclick="clearForm()">Clear</button>
+
+</div>
+
+</section>
+
+<section class="panel">
+
+<div class="topline">
+
+<h2 id="listTitle">All complaints</h2>
+
+<input id="search" style="max-width:230px" placeholder="Search..." oninput="renderComplaints()">
+
+</div>
+
+<div id="complaintList"></div>
+
+</section>
+
+</section>
+
+</main>
+
+<script>
+
+/* Replace these two values with your Supabase project details. */
+
+const SUPABASE_URL = "https://aofyrjbnaxtcwcvikvca.supabase.co/rest/v1/";
+
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Zu1jH3GRarnNS7bmyiLSyA_aM9aOONC";
+
+let db = null;
+
+let currentUser = null;
+
+let complaints = [];
+
+let currentFilter = "All";
+
+function message(text,ok=false){
+
+ const el=document.getElementById("message");
+
+ el.textContent=text;
+
+ el.style.display="block";
+
+ el.style.background=ok?"#dcfce7":"#fee2e2";
+
+ el.style.color=ok?"#166534":"#991b1b";
+
+}
+
+function clearMessage(){document.getElementById("message").style.display="none"}
+
+function init(){
+
+ if(!window.supabase){message("Could not load Supabase. Check your internet connection.");return}
+
+ if(SUPABASE_URL.includes("PASTE_")||SUPABASE_PUBLISHABLE_KEY.includes("PASTE_")){
+
+   message("Please add your Supabase Project URL and Publishable key in the code.");
+
+   return;
+
+ }
+
+ db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+
+ db.auth.getSession().then(async ({data})=>{
+
+   if(data.session){
+
+     currentUser=data.session.user;
+
+     showApp();
+
+     await loadComplaints();
+
+   }
+
+ });
+
+}
+
+function showApp(){
+
+ document.getElementById("login").style.display="none";
+
+ document.getElementById("app").style.display="block";
+
+ clearMessage();
+
+}
+
+async function signIn(){
+
+ if(!db){init();if(!db)return}
+
+ const email=document.getElementById("email").value.trim();
+
+ const password=document.getElementById("password").value;
+
+ if(!email||!password){message("Enter your email and password.");return}
+
+ const {data,error}=await db.auth.signInWithPassword({email,password});
+
+ if(error){message("Login failed: "+error.message);return}
+
+ currentUser=data.user;
+
+ showApp();
+
+ await loadComplaints();
+
+}
+
+async function signOut(){
+
+ if(db)await db.auth.signOut();
+
+ currentUser=null;
+
+ complaints=[];
+
+ document.getElementById("app").style.display="none";
+
+ document.getElementById("login").style.display="block";
+
+ clearMessage();
+
+}
+
+async function loadComplaints(){
+
+ if(!db||!currentUser)return;
+
+ const {data,error}=await db.from("complaints").select("*").order("created_at",{ascending:false});
+
+ if(error){message("Could not load complaints: "+error.message);return}
+
+ complaints=data||[];
+
+ updateDashboard();
+
+ renderComplaints();
+
+}
+
+function updateDashboard(){
+
+ ["All","New","In Progress","Resolved"].forEach(s=>{
+
+  const n=s==="All"?complaints.length:complaints.filter(c=>c.status===s).length;
+
+  document.getElementById("count-"+s).textContent=n;
+
+ });
+
+}
+
+function setFilter(s){
+
+ currentFilter=s;
+
+ ["All","New","In Progress","Resolved"].forEach(x=>document.getElementById("card-"+x).classList.toggle("active",x===s));
+
+ document.getElementById("listTitle").textContent=s==="All"?"All complaints":s+" complaints";
+
+ renderComplaints();
+
+}
+
+function renderComplaints(){
+
+ const q=document.getElementById("search").value.toLowerCase().trim();
+
+ const list=complaints.filter(c=>(currentFilter==="All"||c.status===currentFilter)&&
+
+ [c.department,c.project,c.subject,c.details,c.reported_by,c.responsible,c.root_cause,c.status]
+
+ .some(v=>String(v||"").toLowerCase().includes(q)));
+
+ const target=document.getElementById("complaintList");
+
+ target.replaceChildren();
+
+ if(!list.length){target.textContent="No complaints found.";return}
+
+ list.forEach(c=>{
+
+  const card=document.createElement("article");card.className="complaint";
+
+  const h=document.createElement("h3");h.textContent="#"+c.id+" — "+c.subject;card.appendChild(h);
+
+  const meta=document.createElement("p");meta.className="meta";
+
+  meta.textContent=[c.department,c.project,c.created_at?new Date(c.created_at).toLocaleString():""].filter(Boolean).join(" • ");card.appendChild(meta);
+
+  const status=document.createElement("span");status.className="pill status-"+c.status.replace(/\s/g,"-");status.textContent=c.status;card.appendChild(status);
+
+  const pr=document.createElement("span");pr.className="pill";pr.textContent="Priority: "+c.priority;card.appendChild(pr);
+
+  const d=document.createElement("p");d.className="details";d.textContent=c.details||"";card.appendChild(d);
+
+  const extra=document.createElement("p");extra.className="meta";
+
+  extra.textContent=[c.reported_by?"Reported by: "+c.reported_by:"",c.responsible?"Responsible: "+c.responsible:"",c.root_cause?"Action: "+c.root_cause:""].filter(Boolean).join(" | ");
+
+  card.appendChild(extra);
+
+  const actions=document.createElement("div");actions.className="actions";
+
+  const edit=document.createElement("button");edit.className="secondary";edit.textContent="Edit";edit.onclick=()=>editComplaint(c.id);actions.appendChild(edit);
+
+  const del=document.createElement("button");del.className="danger";del.textContent="Delete";del.onclick=()=>deleteComplaint(c.id);actions.appendChild(del);
+
+  card.appendChild(actions);target.appendChild(card);
+
+ });
+
+}
+
+function clearForm(){
+
+ ["editId","department","project","subject","reportedBy","responsible","details","rootCause","originalDate"].forEach(id=>document.getElementById(id).value="");
+
+ document.getElementById("priority").value="Medium";
+
+ document.getElementById("status").value="New";
+
+ document.getElementById("formTitle").textContent="Add a complaint";
+
+}
+
+function editComplaint(id){
+
+ const c=complaints.find(x=>x.id===id);if(!c)return;
+
+ document.getElementById("editId").value=c.id;
+
+ document.getElementById("department").value=c.department||"";
+
+ document.getElementById("project").value=c.project||"";
+
+ document.getElementById("subject").value=c.subject||"";
+
+ document.getElementById("reportedBy").value=c.reported_by||"";
+
+ document.getElementById("responsible").value=c.responsible||"";
+
+ document.getElementById("details").value=c.details||"";
+
+ document.getElementById("rootCause").value=c.root_cause||"";
+
+ document.getElementById("priority").value=c.priority||"Medium";
+
+ document.getElementById("status").value=c.status||"New";
+
+ document.getElementById("originalDate").value=c.original_date||"";
+
+ document.getElementById("formTitle").textContent="Edit complaint #"+id;
+
+ window.scrollTo({top:0,behavior:"smooth"});
+
+}
+
+async function saveComplaint(){
+
+ if(!db||!currentUser){message("Please login first.");return}
+
+ const id=document.getElementById("editId").value;
+
+ const department=document.getElementById("department").value;
+
+ const project=document.getElementById("project").value.trim();
+
+ const subject=document.getElementById("subject").value.trim();
+
+ const details=document.getElementById("details").value.trim();
+
+ if(!department||!project||!subject||!details){message("Fill in Department, Project, Subject and Details.");return}
+
+ const status=document.getElementById("status").value;
+
+ const old=id?complaints.find(c=>String(c.id)===String(id)):null;
+
+ const now=new Date().toISOString();
+
+ const payload={
+
+  department,project,subject,details,
+
+  reported_by:document.getElementById("reportedBy").value.trim(),
+
+  responsible:document.getElementById("responsible").value.trim(),
+
+  priority:document.getElementById("priority").value,
+
+  status,root_cause:document.getElementById("rootCause").value.trim(),
+
+  original_date:document.getElementById("originalDate").value||null,
+
+  last_update:now,
+
+  started_at:status==="In Progress"?(old?.started_at||now):(old?.started_at||null),
+
+  resolved_at:status==="Resolved"?(old?.resolved_at||now):null
+
+ };
+
+ let result=id?await db.from("complaints").update(payload).eq("id",Number(id)):await db.from("complaints").insert(payload);
+
+ if(result.error){message("Save failed: "+result.error.message);return}
+
+ clearForm();message("Complaint saved successfully.",true);await loadComplaints();
+
+}
+
+async function deleteComplaint(id){
+
+ if(!confirm("Delete complaint #"+id+"? This cannot be undone."))return;
+
+ const {error}=await db.from("complaints").delete().eq("id",id);
+
+ if(error){message("Delete failed: "+error.message);return}
+
+ message("Complaint deleted.",true);await loadComplaints();
+
+}
+
+init();
+
+</script>
+
+</body>
+
+</html>
