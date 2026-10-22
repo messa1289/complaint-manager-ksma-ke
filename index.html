@@ -16,71 +16,75 @@
 
 <style>
 
+:root{font-family:Arial,sans-serif;color:#202938;background:#f3f5f8}
+
 *{box-sizing:border-box}
 
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#17243a}
+body{margin:0}
 
-header{background:#142b4a;color:white;padding:20px}
+header{background:#17365d;color:white;padding:20px}
 
-header h1{font-size:21px;margin:0 0 5px}
+header h1{font-size:22px;margin:0 0 6px}
 
-header p{margin:0;font-size:13px;color:#dce7f6}
+header p{margin:0;font-size:13px}
 
-main{max-width:1000px;margin:auto;padding:15px}
+main{max-width:1000px;margin:20px auto;padding:0 14px}
 
-.panel,.stat{background:white;border:1px solid #dfe6ef;border-radius:12px;padding:15px;margin-bottom:15px}
+.panel{background:white;padding:18px;border-radius:12px;margin-bottom:16px;box-shadow:0 2px 8px #0000000c}
 
-h2{font-size:18px;margin:0 0 12px}
+h2{font-size:19px;margin-top:0}
 
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:15px}
+label{display:block;font-size:14px;font-weight:bold;margin:12px 0 6px}
 
-.stat{text-align:left;cursor:pointer;margin:0}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cbd2dc;border-radius:7px;font:inherit;background:white}
 
-.stat strong{display:block;font-size:25px;margin:9px 0}
+textarea{min-height:85px;resize:vertical}
 
-.stat small,.meta{color:#64748b;font-size:12px}
+button{border:0;border-radius:7px;padding:11px 15px;background:#1769aa;color:white;font-weight:bold;font-size:14px;cursor:pointer;margin:5px 4px 0 0}
 
-.active{border:2px solid #2463eb}
+button.secondary{background:#e7edf5;color:#17365d}
 
-label{display:block;font-size:13px;font-weight:bold;margin:12px 0 6px}
+button.danger{background:#b42318}
 
-input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font-size:15px;background:white}
+button:disabled{opacity:.5}
 
-textarea{min-height:80px}
+a{color:#1769aa;cursor:pointer}
 
-button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:pointer}
+.small{font-size:13px;color:#64748b}
 
-.primary{background:#2463eb;color:white}
+.message{padding:10px;border-radius:7px;margin-top:12px;overflow-wrap:anywhere}
 
-.secondary{background:#e8eef7;color:#142b4a}
+.error{background:#fee4e2;color:#912018}
 
-.danger{background:#fee2e2;color:#991b1b}
+.success{background:#dcfae6;color:#166534}
 
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.hidden{display:none!important}
 
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 
-.complaint{background:white;border:1px solid #dfe6ef;border-radius:10px;padding:13px;margin-top:10px}
+.stat{background:white;border:2px solid transparent;border-radius:10px;padding:15px 8px;text-align:center;cursor:pointer}
 
-.complaint h3{font-size:16px;margin:0 0 8px;overflow-wrap:anywhere}
+.stat.active{border-color:#1769aa;background:#eaf3ff}
 
-.pill{display:inline-block;padding:5px 8px;border-radius:20px;background:#e8eef7;font-size:12px;margin:3px}
+.stat strong{display:block;font-size:25px;margin-top:7px}
 
-.status-New{background:#dbeafe;color:#1d4ed8}
+.stat span{font-size:12px;font-weight:bold}
 
-.status-In-Progress{background:#fef3c7;color:#92400e}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 
-.status-Resolved{background:#dcfce7;color:#166534}
+.complaint{border:1px solid #e0e5ec;border-radius:9px;padding:14px;margin-top:12px}
 
-.details{white-space:pre-wrap;overflow-wrap:anywhere}
+.complaint h3{margin:0 0 8px;font-size:17px;overflow-wrap:anywhere}
 
-.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.meta{font-size:12px;color:#64748b;line-height:1.6}
 
-#app{display:none}
+.pill{display:inline-block;padding:5px 8px;border-radius:15px;background:#edf2f7;font-size:12px;margin:3px 5px 3px 0}
 
-#message{display:none;padding:11px;border-radius:7px;margin-bottom:12px;white-space:pre-wrap}
+.actions{margin-top:8px}
 
-@media(max-width:600px){.grid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}main{padding:10px}}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+
+@media(max-width:520px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:1fr}header h1{font-size:19px}}
 
 </style>
 
@@ -92,85 +96,175 @@ button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:poin
 
 <h1>Complaint Manager KSMA-ke</h1>
 
-<p>Shared complaint management</p>
+<p>Complaint tracking and management</p>
 
 </header>
 
 <main>
 
-<div id="message"></div>
-
 <section id="login" class="panel">
 
 <h2>Login</h2>
 
+<p class="small">Sign in with your registered email and password.</p>
+
+<form id="loginForm">
+
 <label for="email">Email</label>
 
-<input id="email" type="email" autocomplete="username" placeholder="Your email">
+<input id="email" type="email" autocomplete="username" required>
 
 <label for="password">Password</label>
 
-<input id="password" type="password" autocomplete="current-password" placeholder="Your password">
+<input id="password" type="password" autocomplete="current-password" required>
 
-<div class="actions">
+<button type="submit">Login</button>
 
-<button class="primary" onclick="signIn()">Login</button>
+</form>
 
-</div>
+<p><a id="forgotLink" href="#">Forgot Password?</a></p>
+
+<div id="loginMessage" class="message hidden"></div>
 
 </section>
 
-<section id="app">
+<section id="forgotPanel" class="panel hidden">
 
-<div class="topline">
+<h2>Forgot Password</h2>
 
-<h2>Dashboard</h2>
+<p>Enter your registered email. We will send you a password reset link.</p>
 
-<div class="actions">
+<form id="forgotForm">
 
-<button class="secondary" onclick="loadComplaints()">Refresh</button>
+<label for="forgotEmail">Email</label>
 
-<button class="secondary" onclick="signOut()">Logout</button>
+<input id="forgotEmail" type="email" required autocomplete="email">
+
+<button type="submit">Send Reset Link</button>
+
+<button type="button" class="secondary" id="backToLogin">Back to Login</button>
+
+</form>
+
+<div id="forgotMessage" class="message hidden"></div>
+
+</section>
+
+<section id="resetPanel" class="panel hidden">
+
+<h2>New Password</h2>
+
+<p>Enter your new password and confirm it.</p>
+
+<form id="resetForm">
+
+<label for="newPassword">New Password</label>
+
+<input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+
+<label for="confirmPassword">Confirm New Password</label>
+
+<input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required>
+
+<button type="submit">Save New Password</button>
+
+</form>
+
+<div id="resetMessage" class="message hidden"></div>
+
+</section>
+
+<section id="app" class="hidden">
+
+<div class="panel toprow">
+
+<div>
+
+<strong id="signedInEmail"></strong>
+
+<p class="small">Complaint dashboard</p>
+
+</div>
+
+<div>
+
+<button type="button" class="secondary" id="changePasswordBtn">Change Password</button>
+
+<button type="button" id="signOutBtn">Sign Out</button>
 
 </div>
 
 </div>
 
-<div class="grid">
+<section id="changePanel" class="panel hidden">
 
-<button class="stat active" id="card-All" onclick="setFilter('All')">TOTAL<strong id="count-All">0</strong><small>All complaints</small></button>
+<h2>Change Password</h2>
 
-<button class="stat" id="card-New" onclick="setFilter('New')">NEW<strong id="count-New">0</strong><small>Not started</small></button>
+<form id="changeForm">
 
-<button class="stat" id="card-In Progress" onclick="setFilter('In Progress')">IN PROGRESS<strong id="count-In Progress">0</strong><small>Being handled</small></button>
+<label for="currentPassword">Current Password</label>
 
-<button class="stat" id="card-Resolved" onclick="setFilter('Resolved')">RESOLVED<strong id="count-Resolved">0</strong><small>Closed complaints</small></button>
+<input id="currentPassword" type="password" autocomplete="current-password" required>
+
+<label for="changedPassword">New Password</label>
+
+<input id="changedPassword" type="password" minlength="8" autocomplete="new-password" required>
+
+<label for="confirmChangedPassword">Confirm New Password</label>
+
+<input id="confirmChangedPassword" type="password" minlength="8" autocomplete="new-password" required>
+
+<button type="submit">Update Password</button>
+
+<button type="button" class="secondary" id="cancelChange">Cancel</button>
+
+</form>
+
+<div id="changeMessage" class="message hidden"></div>
+
+</section>
+
+<div class="cards">
+
+<button type="button" class="stat active" data-filter="All"><span>TOTAL</span><strong id="count-All">0</strong></button>
+
+<button type="button" class="stat" data-filter="New"><span>NEW</span><strong id="count-New">0</strong></button>
+
+<button type="button" class="stat" data-filter="In Progress"><span>IN PROGRESS</span><strong id="count-In Progress">0</strong></button>
+
+<button type="button" class="stat" data-filter="Resolved"><span>RESOLVED</span><strong id="count-Resolved">0</strong></button>
 
 </div>
 
-<section class="panel">
+<section class="panel" style="margin-top:16px">
 
 <h2 id="formTitle">Add a complaint</h2>
 
-<input id="editId" type="hidden">
+<form id="complaintForm">
+
+<input type="hidden" id="editId">
 
 <div class="formgrid">
 
 <div>
 
-<label for="department">Department *</label>
+<label for="department">Department</label>
 
-<select id="department">
+<select id="department" required>
 
 <option value="">Select department</option>
 
-<option>Production</option><option>Planning</option><option>Traffic</option>
+<option>Production</option><option>Planning</option>
 
-<option>Incoming</option><option>Finance</option><option>IE</option>
+<option>Traffic</option><option>Incoming</option>
 
-<option>Quality</option><option>HR</option><option>HSE</option>
+<option>Finance</option><option>IE</option>
 
-<option>Logistics</option><option>Other</option>
+<option>Quality</option><option>HR</option>
+
+<option>HSE</option><option>Logistics</option>
+
+<option>Other</option>
 
 </select>
 
@@ -178,25 +272,25 @@ button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:poin
 
 <div>
 
-<label for="project">Project *</label>
+<label for="project">Project</label>
 
-<input id="project" placeholder="Enter project">
-
-</div>
-
-<div>
-
-<label for="subject">Complaint subject *</label>
-
-<input id="subject" placeholder="Short subject">
+<input id="project" required>
 
 </div>
 
 <div>
 
-<label for="reportedBy">Reported by</label>
+<label for="subject">Subject</label>
 
-<input id="reportedBy" placeholder="Name or staff ID">
+<input id="subject" required>
+
+</div>
+
+<div>
+
+<label for="reportedBy">Reported By</label>
+
+<input id="reportedBy">
 
 </div>
 
@@ -204,7 +298,7 @@ button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:poin
 
 <label for="responsible">Responsible</label>
 
-<input id="responsible" placeholder="Person or group">
+<input id="responsible">
 
 </div>
 
@@ -212,7 +306,7 @@ button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:poin
 
 <label for="priority">Priority</label>
 
-<select id="priority"><option>Medium</option><option>High</option><option>Low</option></select>
+<select id="priority"><option>Low</option><option selected>Medium</option><option>High</option></select>
 
 </div>
 
@@ -226,7 +320,7 @@ button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:poin
 
 <div>
 
-<label for="originalDate">Complaint date</label>
+<label for="originalDate">Original Date (optional)</label>
 
 <input id="originalDate" type="date">
 
@@ -234,33 +328,37 @@ button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:poin
 
 </div>
 
-<label for="details">Details *</label>
+<label for="details">Details</label>
 
-<textarea id="details" placeholder="Describe the complaint"></textarea>
+<textarea id="details" required></textarea>
 
-<label for="rootCause">Root cause / action taken</label>
+<label for="rootCause">Action / Root Cause</label>
 
-<textarea id="rootCause" placeholder="Root cause or action taken"></textarea>
+<textarea id="rootCause"></textarea>
 
-<div class="actions">
+<button type="submit">Save Complaint</button>
 
-<button class="primary" onclick="saveComplaint()">Save complaint</button>
+<button type="button" class="secondary" id="clearBtn">Clear Form</button>
 
-<button class="secondary" onclick="clearForm()">Clear</button>
+<div id="formMessage" class="message hidden"></div>
 
-</div>
+</form>
 
 </section>
 
 <section class="panel">
 
-<div class="topline">
+<div class="toprow">
 
 <h2 id="listTitle">All complaints</h2>
 
-<input id="search" style="max-width:230px" placeholder="Search..." oninput="renderComplaints()">
+<button type="button" class="secondary" id="refreshBtn">Refresh</button>
 
 </div>
+
+<label for="search">Search complaints</label>
+
+<input id="search" placeholder="Search by department, project, subject...">
 
 <div id="complaintList"></div>
 
@@ -272,11 +370,11 @@ button{border:0;border-radius:7px;padding:11px 14px;font-weight:bold;cursor:poin
 
 <script>
 
-/* Replace these two values with your Supabase project details. */
-
-const SUPABASE_URL = "const SUPABASE_URL = "https://aofyrjbnaxtcwcvikvca.supabase.co";";";
+const SUPABASE_URL = "https://aofyrjbnaxtcwcvikvca.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Zu1jH3GRarnNS7bmyiLSyA_aM9aOONC";
+
+const SITE_URL = "https://messa1289.github.io/complaint-manager-ksma-ke/";
 
 let db = null;
 
@@ -286,299 +384,757 @@ let complaints = [];
 
 let currentFilter = "All";
 
-function message(text,ok=false){
+let recoveryMode = false;
 
- const el=document.getElementById("message");
+const $ = id => document.getElementById(id);
 
- el.textContent=text;
+function showMessage(id, text, good=false) {
 
- el.style.display="block";
+  const el = $(id);
 
- el.style.background=ok?"#dcfce7":"#fee2e2";
+  el.textContent = text;
 
- el.style.color=ok?"#166534":"#991b1b";
-
-}
-
-function clearMessage(){document.getElementById("message").style.display="none"}
-
-function init(){
-
- if(!window.supabase){message("Could not load Supabase. Check your internet connection.");return}
-
- if(SUPABASE_URL.includes("PASTE_")||SUPABASE_PUBLISHABLE_KEY.includes("PASTE_")){
-
-   message("Please add your Supabase Project URL and Publishable key in the code.");
-
-   return;
-
- }
-
- db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-
- db.auth.getSession().then(async ({data})=>{
-
-   if(data.session){
-
-     currentUser=data.session.user;
-
-     showApp();
-
-     await loadComplaints();
-
-   }
-
- });
+  el.className = "message " + (good ? "success" : "error");
 
 }
 
-function showApp(){
+function hideMessage(id) {
 
- document.getElementById("login").style.display="none";
-
- document.getElementById("app").style.display="block";
-
- clearMessage();
+  $(id).className = "message hidden";
 
 }
 
-async function signIn(){
+function showOnly(section) {
 
- if(!db){init();if(!db)return}
+  ["login","forgotPanel","resetPanel","app"].forEach(id => $(id).classList.add("hidden"));
 
- const email=document.getElementById("email").value.trim();
-
- const password=document.getElementById("password").value;
-
- if(!email||!password){message("Enter your email and password.");return}
-
- const {data,error}=await db.auth.signInWithPassword({email,password});
-
- if(error){message("Login failed: "+error.message);return}
-
- currentUser=data.user;
-
- showApp();
-
- await loadComplaints();
+  $(section).classList.remove("hidden");
 
 }
 
-async function signOut(){
+function showLogin() {
 
- if(db)await db.auth.signOut();
+  recoveryMode = false;
 
- currentUser=null;
-
- complaints=[];
-
- document.getElementById("app").style.display="none";
-
- document.getElementById("login").style.display="block";
-
- clearMessage();
+  showOnly("login");
 
 }
 
-async function loadComplaints(){
+function showReset() {
 
- if(!db||!currentUser)return;
+  recoveryMode = true;
 
- const {data,error}=await db.from("complaints").select("*").order("created_at",{ascending:false});
-
- if(error){message("Could not load complaints: "+error.message);return}
-
- complaints=data||[];
-
- updateDashboard();
-
- renderComplaints();
+  showOnly("resetPanel");
 
 }
 
-function updateDashboard(){
+function showApp() {
 
- ["All","New","In Progress","Resolved"].forEach(s=>{
+  $("signedInEmail").textContent = currentUser?.email || "";
 
-  const n=s==="All"?complaints.length:complaints.filter(c=>c.status===s).length;
-
-  document.getElementById("count-"+s).textContent=n;
-
- });
+  showOnly("app");
 
 }
 
-function setFilter(s){
+function init() {
 
- currentFilter=s;
+  if (db) return true;
 
- ["All","New","In Progress","Resolved"].forEach(x=>document.getElementById("card-"+x).classList.toggle("active",x===s));
+  if (!window.supabase) {
 
- document.getElementById("listTitle").textContent=s==="All"?"All complaints":s+" complaints";
+    showMessage("loginMessage", "Could not load Supabase. Check your internet connection.");
 
- renderComplaints();
+    return false;
 
-}
+  }
 
-function renderComplaints(){
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
 
- const q=document.getElementById("search").value.toLowerCase().trim();
+    auth: { detectSessionInUrl: true, persistSession: true, autoRefreshToken: true }
 
- const list=complaints.filter(c=>(currentFilter==="All"||c.status===currentFilter)&&
+  });
 
- [c.department,c.project,c.subject,c.details,c.reported_by,c.responsible,c.root_cause,c.status]
+  db.auth.onAuthStateChange((event, session) => {
 
- .some(v=>String(v||"").toLowerCase().includes(q)));
+    if (event === "PASSWORD_RECOVERY") {
 
- const target=document.getElementById("complaintList");
+      showReset();
 
- target.replaceChildren();
+    } else if (event === "SIGNED_OUT") {
 
- if(!list.length){target.textContent="No complaints found.";return}
+      currentUser = null;
 
- list.forEach(c=>{
+      complaints = [];
 
-  const card=document.createElement("article");card.className="complaint";
+      showLogin();
 
-  const h=document.createElement("h3");h.textContent="#"+c.id+" — "+c.subject;card.appendChild(h);
+    } else if (session?.user && !recoveryMode) {
 
-  const meta=document.createElement("p");meta.className="meta";
+      currentUser = session.user;
 
-  meta.textContent=[c.department,c.project,c.created_at?new Date(c.created_at).toLocaleString():""].filter(Boolean).join(" • ");card.appendChild(meta);
+    }
 
-  const status=document.createElement("span");status.className="pill status-"+c.status.replace(/\s/g,"-");status.textContent=c.status;card.appendChild(status);
+  });
 
-  const pr=document.createElement("span");pr.className="pill";pr.textContent="Priority: "+c.priority;card.appendChild(pr);
-
-  const d=document.createElement("p");d.className="details";d.textContent=c.details||"";card.appendChild(d);
-
-  const extra=document.createElement("p");extra.className="meta";
-
-  extra.textContent=[c.reported_by?"Reported by: "+c.reported_by:"",c.responsible?"Responsible: "+c.responsible:"",c.root_cause?"Action: "+c.root_cause:""].filter(Boolean).join(" | ");
-
-  card.appendChild(extra);
-
-  const actions=document.createElement("div");actions.className="actions";
-
-  const edit=document.createElement("button");edit.className="secondary";edit.textContent="Edit";edit.onclick=()=>editComplaint(c.id);actions.appendChild(edit);
-
-  const del=document.createElement("button");del.className="danger";del.textContent="Delete";del.onclick=()=>deleteComplaint(c.id);actions.appendChild(del);
-
-  card.appendChild(actions);target.appendChild(card);
-
- });
+  return true;
 
 }
 
-function clearForm(){
+async function signIn() {
 
- ["editId","department","project","subject","reportedBy","responsible","details","rootCause","originalDate"].forEach(id=>document.getElementById(id).value="");
+  hideMessage("loginMessage");
 
- document.getElementById("priority").value="Medium";
+  if (!init()) return;
 
- document.getElementById("status").value="New";
+  const email = $("email").value.trim();
 
- document.getElementById("formTitle").textContent="Add a complaint";
+  const password = $("password").value;
 
-}
+  if (!email || !password) {
 
-function editComplaint(id){
+    showMessage("loginMessage", "Enter your email and password.");
 
- const c=complaints.find(x=>x.id===id);if(!c)return;
+    return;
 
- document.getElementById("editId").value=c.id;
+  }
 
- document.getElementById("department").value=c.department||"";
+  const {data,error} = await db.auth.signInWithPassword({email,password});
 
- document.getElementById("project").value=c.project||"";
+  if (error) {
 
- document.getElementById("subject").value=c.subject||"";
+    showMessage("loginMessage", "Login failed: " + error.message);
 
- document.getElementById("reportedBy").value=c.reported_by||"";
+    return;
 
- document.getElementById("responsible").value=c.responsible||"";
+  }
 
- document.getElementById("details").value=c.details||"";
+  currentUser = data.user;
 
- document.getElementById("rootCause").value=c.root_cause||"";
+  showApp();
 
- document.getElementById("priority").value=c.priority||"Medium";
-
- document.getElementById("status").value=c.status||"New";
-
- document.getElementById("originalDate").value=c.original_date||"";
-
- document.getElementById("formTitle").textContent="Edit complaint #"+id;
-
- window.scrollTo({top:0,behavior:"smooth"});
+  await loadComplaints();
 
 }
 
-async function saveComplaint(){
+async function sendResetEmail() {
 
- if(!db||!currentUser){message("Please login first.");return}
+  hideMessage("forgotMessage");
 
- const id=document.getElementById("editId").value;
+  if (!init()) return;
 
- const department=document.getElementById("department").value;
+  const email = $("forgotEmail").value.trim();
 
- const project=document.getElementById("project").value.trim();
+  if (!email) {
 
- const subject=document.getElementById("subject").value.trim();
+    showMessage("forgotMessage", "Enter your email first.");
 
- const details=document.getElementById("details").value.trim();
+    return;
 
- if(!department||!project||!subject||!details){message("Fill in Department, Project, Subject and Details.");return}
+  }
 
- const status=document.getElementById("status").value;
+  const {error} = await db.auth.resetPasswordForEmail(email, {
 
- const old=id?complaints.find(c=>String(c.id)===String(id)):null;
+    redirectTo: SITE_URL
 
- const now=new Date().toISOString();
+  });
 
- const payload={
+  if (error) {
 
-  department,project,subject,details,
+    showMessage("forgotMessage", "Could not send email: " + error.message);
 
-  reported_by:document.getElementById("reportedBy").value.trim(),
+    return;
 
-  responsible:document.getElementById("responsible").value.trim(),
+  }
 
-  priority:document.getElementById("priority").value,
-
-  status,root_cause:document.getElementById("rootCause").value.trim(),
-
-  original_date:document.getElementById("originalDate").value||null,
-
-  last_update:now,
-
-  started_at:status==="In Progress"?(old?.started_at||now):(old?.started_at||null),
-
-  resolved_at:status==="Resolved"?(old?.resolved_at||now):null
-
- };
-
- let result=id?await db.from("complaints").update(payload).eq("id",Number(id)):await db.from("complaints").insert(payload);
-
- if(result.error){message("Save failed: "+result.error.message);return}
-
- clearForm();message("Complaint saved successfully.",true);await loadComplaints();
+  showMessage("forgotMessage", "Reset email sent. Open the link in the email on this device, then set your new password.", true);
 
 }
 
-async function deleteComplaint(id){
+async function saveNewPassword() {
 
- if(!confirm("Delete complaint #"+id+"? This cannot be undone."))return;
+  hideMessage("resetMessage");
 
- const {error}=await db.from("complaints").delete().eq("id",id);
+  if (!init()) return;
 
- if(error){message("Delete failed: "+error.message);return}
+  const password = $("newPassword").value;
 
- message("Complaint deleted.",true);await loadComplaints();
+  const confirm = $("confirmPassword").value;
+
+  if (password.length < 8) {
+
+    showMessage("resetMessage", "Password must contain at least 8 characters.");
+
+    return;
+
+  }
+
+  if (password !== confirm) {
+
+    showMessage("resetMessage", "The passwords do not match.");
+
+    return;
+
+  }
+
+  const {data,error} = await db.auth.updateUser({password});
+
+  if (error) {
+
+    showMessage("resetMessage", "Could not update password: " + error.message + ". The reset link may have expired; request a new one.");
+
+    return;
+
+  }
+
+  currentUser = data.user;
+
+  $("resetForm").reset();
+
+  recoveryMode = false;
+
+  showMessage("resetMessage", "Password updated successfully. You can now sign in with your new password.", true);
+
+  setTimeout(() => {
+
+    db.auth.signOut();
+
+    showLogin();
+
+  }, 1800);
 
 }
 
-init();
+async function changePassword() {
+
+  hideMessage("changeMessage");
+
+  if (!init()) return;
+
+  const current = $("currentPassword").value;
+
+  const next = $("changedPassword").value;
+
+  const confirm = $("confirmChangedPassword").value;
+
+  if (next.length < 8) {
+
+    showMessage("changeMessage", "New password must contain at least 8 characters.");
+
+    return;
+
+  }
+
+  if (next !== confirm) {
+
+    showMessage("changeMessage", "The new passwords do not match.");
+
+    return;
+
+  }
+
+  if (next === current) {
+
+    showMessage("changeMessage", "Choose a password different from your current password.");
+
+    return;
+
+  }
+
+  const email = currentUser?.email;
+
+  if (!email) {
+
+    showMessage("changeMessage", "Please sign in again.");
+
+    return;
+
+  }
+
+  const {error:verifyError} = await db.auth.signInWithPassword({email,password:current});
+
+  if (verifyError) {
+
+    showMessage("changeMessage", "Current password is incorrect.");
+
+    return;
+
+  }
+
+  const {error} = await db.auth.updateUser({password:next});
+
+  if (error) {
+
+    showMessage("changeMessage", "Could not change password: " + error.message);
+
+    return;
+
+  }
+
+  $("changeForm").reset();
+
+  showMessage("changeMessage", "Password changed successfully.", true);
+
+}
+
+async function signOut() {
+
+  if (db) await db.auth.signOut();
+
+  currentUser = null;
+
+  complaints = [];
+
+  showLogin();
+
+}
+
+async function loadComplaints() {
+
+  if (!db || !currentUser) return;
+
+  const {data,error} = await db.from("complaints").select("*").order("created_at",{ascending:false});
+
+  if (error) {
+
+    alert("Could not load complaints: " + error.message);
+
+    return;
+
+  }
+
+  complaints = data || [];
+
+  updateDashboard();
+
+  renderComplaints();
+
+}
+
+function updateDashboard() {
+
+  ["All","New","In Progress","Resolved"].forEach(s => {
+
+    const n = s === "All" ? complaints.length : complaints.filter(c => c.status === s).length;
+
+    $("count-" + s).textContent = n;
+
+  });
+
+}
+
+function setFilter(s) {
+
+  currentFilter = s;
+
+  document.querySelectorAll(".stat").forEach(card => {
+
+    card.classList.toggle("active", card.dataset.filter === s);
+
+  });
+
+  $("listTitle").textContent = s === "All" ? "All complaints" : s + " complaints";
+
+  renderComplaints();
+
+}
+
+function renderComplaints() {
+
+  const q = $("search").value.toLowerCase().trim();
+
+  const list = complaints.filter(c =>
+
+    (currentFilter === "All" || c.status === currentFilter) &&
+
+    [c.department,c.project,c.subject,c.details,c.reported_by,c.responsible,c.root_cause,c.status]
+
+      .some(v => String(v || "").toLowerCase().includes(q))
+
+  );
+
+  const target = $("complaintList");
+
+  target.replaceChildren();
+
+  if (!list.length) {
+
+    target.textContent = "No complaints found.";
+
+    return;
+
+  }
+
+  list.forEach(c => {
+
+    const card = document.createElement("article");
+
+    card.className = "complaint";
+
+    const h = document.createElement("h3");
+
+    h.textContent = "#" + c.id + " — " + c.subject;
+
+    card.appendChild(h);
+
+    const meta = document.createElement("p");
+
+    meta.className = "meta";
+
+    meta.textContent = [c.department,c.project,c.created_at ? new Date(c.created_at).toLocaleString() : ""].filter(Boolean).join(" • ");
+
+    card.appendChild(meta);
+
+    const status = document.createElement("span");
+
+    status.className = "pill";
+
+    status.textContent = c.status;
+
+    card.appendChild(status);
+
+    const priority = document.createElement("span");
+
+    priority.className = "pill";
+
+    priority.textContent = "Priority: " + c.priority;
+
+    card.appendChild(priority);
+
+    const details = document.createElement("p");
+
+    details.textContent = c.details || "";
+
+    card.appendChild(details);
+
+    const extra = document.createElement("p");
+
+    extra.className = "meta";
+
+    extra.textContent = [
+
+      c.reported_by ? "Reported by: " + c.reported_by : "",
+
+      c.responsible ? "Responsible: " + c.responsible : "",
+
+      c.root_cause ? "Action: " + c.root_cause : ""
+
+    ].filter(Boolean).join(" | ");
+
+    card.appendChild(extra);
+
+    const actions = document.createElement("div");
+
+    actions.className = "actions";
+
+    const edit = document.createElement("button");
+
+    edit.className = "secondary";
+
+    edit.textContent = "Edit";
+
+    edit.onclick = () => editComplaint(c.id);
+
+    actions.appendChild(edit);
+
+    const del = document.createElement("button");
+
+    del.className = "danger";
+
+    del.textContent = "Delete";
+
+    del.onclick = () => deleteComplaint(c.id);
+
+    actions.appendChild(del);
+
+    card.appendChild(actions);
+
+    target.appendChild(card);
+
+  });
+
+}
+
+function clearForm() {
+
+  $("complaintForm").reset();
+
+  $("editId").value = "";
+
+  $("priority").value = "Medium";
+
+  $("status").value = "New";
+
+  $("formTitle").textContent = "Add a complaint";
+
+  hideMessage("formMessage");
+
+}
+
+function editComplaint(id) {
+
+  const c = complaints.find(x => String(x.id) === String(id));
+
+  if (!c) return;
+
+  $("editId").value = c.id;
+
+  $("department").value = c.department || "";
+
+  $("project").value = c.project || "";
+
+  $("subject").value = c.subject || "";
+
+  $("reportedBy").value = c.reported_by || "";
+
+  $("responsible").value = c.responsible || "";
+
+  $("details").value = c.details || "";
+
+  $("rootCause").value = c.root_cause || "";
+
+  $("priority").value = c.priority || "Medium";
+
+  $("status").value = c.status || "New";
+
+  $("originalDate").value = c.original_date || "";
+
+  $("formTitle").textContent = "Edit complaint #" + id;
+
+  window.scrollTo({top:0,behavior:"smooth"});
+
+}
+
+async function saveComplaint() {
+
+  hideMessage("formMessage");
+
+  if (!db || !currentUser) {
+
+    showMessage("formMessage", "Please login first.");
+
+    return;
+
+  }
+
+  const id = $("editId").value;
+
+  const department = $("department").value;
+
+  const project = $("project").value.trim();
+
+  const subject = $("subject").value.trim();
+
+  const details = $("details").value.trim();
+
+  if (!department || !project || !subject || !details) {
+
+    showMessage("formMessage", "Fill in Department, Project, Subject and Details.");
+
+    return;
+
+  }
+
+  const status = $("status").value;
+
+  const old = id ? complaints.find(c => String(c.id) === String(id)) : null;
+
+  const now = new Date().toISOString();
+
+  const payload = {
+
+    department,project,subject,details,
+
+    reported_by:$("reportedBy").value.trim(),
+
+    responsible:$("responsible").value.trim(),
+
+    priority:$("priority").value,
+
+    status,
+
+    root_cause:$("rootCause").value.trim(),
+
+    original_date:$("originalDate").value || null,
+
+    last_update:now,
+
+    started_at:status === "In Progress" ? (old?.started_at || now) : (old?.started_at || null),
+
+    resolved_at:status === "Resolved" ? (old?.resolved_at || now) : null
+
+  };
+
+  const result = id
+
+    ? await db.from("complaints").update(payload).eq("id",Number(id))
+
+    : await db.from("complaints").insert(payload);
+
+  if (result.error) {
+
+    showMessage("formMessage", "Save failed: " + result.error.message);
+
+    return;
+
+  }
+
+  clearForm();
+
+  showMessage("formMessage", "Complaint saved successfully.", true);
+
+  await loadComplaints();
+
+}
+
+async function deleteComplaint(id) {
+
+  if (!confirm("Delete complaint #" + id + "? This cannot be undone.")) return;
+
+  const {error} = await db.from("complaints").delete().eq("id",id);
+
+  if (error) {
+
+    alert("Delete failed: " + error.message);
+
+    return;
+
+  }
+
+  await loadComplaints();
+
+}
+
+$("loginForm").addEventListener("submit", e => {
+
+  e.preventDefault();
+
+  signIn();
+
+});
+
+$("forgotLink").addEventListener("click", e => {
+
+  e.preventDefault();
+
+  $("forgotEmail").value = $("email").value.trim();
+
+  hideMessage("forgotMessage");
+
+  showOnly("forgotPanel");
+
+});
+
+$("forgotForm").addEventListener("submit", e => {
+
+  e.preventDefault();
+
+  sendResetEmail();
+
+});
+
+$("backToLogin").addEventListener("click", showLogin);
+
+$("resetForm").addEventListener("submit", e => {
+
+  e.preventDefault();
+
+  saveNewPassword();
+
+});
+
+$("changePasswordBtn").addEventListener("click", () => {
+
+  $("changePanel").classList.remove("hidden");
+
+  hideMessage("changeMessage");
+
+});
+
+$("cancelChange").addEventListener("click", () => {
+
+  $("changePanel").classList.add("hidden");
+
+  $("changeForm").reset();
+
+});
+
+$("changeForm").addEventListener("submit", e => {
+
+  e.preventDefault();
+
+  changePassword();
+
+});
+
+$("signOutBtn").addEventListener("click", signOut);
+
+$("complaintForm").addEventListener("submit", e => {
+
+  e.preventDefault();
+
+  saveComplaint();
+
+});
+
+$("clearBtn").addEventListener("click", clearForm);
+
+$("refreshBtn").addEventListener("click", loadComplaints);
+
+$("search").addEventListener("input", renderComplaints);
+
+document.querySelectorAll(".stat").forEach(card => {
+
+  card.addEventListener("click", () => setFilter(card.dataset.filter));
+
+});
+
+async function startApp() {
+
+  if (!init()) return;
+
+  const hash = window.location.hash;
+
+  const params = new URLSearchParams(hash.replace(/^#/,""));
+
+  const query = new URLSearchParams(window.location.search);
+
+  if (params.get("type") === "recovery" || query.get("type") === "recovery") {
+
+    showReset();
+
+  }
+
+  const {data,error} = await db.auth.getSession();
+
+  if (error) {
+
+    showLogin();
+
+    return;
+
+  }
+
+  if (data.session?.user && !recoveryMode) {
+
+    currentUser = data.session.user;
+
+    showApp();
+
+    await loadComplaints();
+
+  } else if (recoveryMode) {
+
+    showReset();
+
+  } else {
+
+    showLogin();
+
+  }
+
+}
+
+startApp();
 
 </script>
 
